@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #151520;
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+}
+
+input { 
+    color: #A2A7BC;
+    font-size: 1.4vh;
+    background-color: #181824;
+    border: none;
+    border-bottom: 1px solid #443D6B;
+    margin-top: 0.5vh;
+}
+
+label {
+    color: #EEE7FF;
+    border: none;
+    font-size: 1.7vh;
+    font-weight: 500;
+}
+
+form {
+    margin-left: 4vw;
+}
+
+.title {
+    color: #A585FF;
+    margin-bottom: 0;
+    margin-left: 10vw;
+}
+
+.subtitle {
+    margin-top: 0.3vh;
+    margin-left: 10.1vw;
+    color: #EEE7FF;
+}
+
+#ticker{
+    width: 15.5vw;
+}
+
+.in {
+    background-color: #181824;
+    padding: 0.7vw;
+    margin: 1vh;
+    border-radius: 0.7vh;
+    width: 87%;
+    height: 30%;
+}
+
+.icon {
+    color: #A585FF;
+    font-size: 1.2vh;
+    margin-right: 0.4vw;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.dates{
+    display: flex;
+}
+
+.btn{
+    background-color: #A585FF;
+    border-radius: 20px;
+    width: 10vh;
+    height: 3vh;
+    text-align: center;
+    margin: 1vh;
+    transition: all 0.2s ease-in-out;
+}
+.btn input{
+    background-color: transparent;
+    color: #EEE7FF;
+    border: none;
+    font-size: 1.4vh;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+.btn:hover{
+    box-shadow: 0 0px 15px rgba(165, 133, 255, .4);
+}
+
+
+.d {
+    display: flex;
+    align-items: right;
+    justify-content: right;
+}
+
+.chart {
+    width: 45%;
+    height: 50%;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23bbbbbb" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+}
+*:focus {
+    outline: none;
+}
+
+.data{
+    display: flex;
+    position: absolute;
+    margin-bottom: 80vh;
+    /* margin-left: -60vw; */
+}
+
+.data div {
+    margin-right: 4vw;
+}
+
+.data h1 {
+    color: #A585FF;
+    margin-bottom: -1.7vh;
+}
+
+.data p {
+    color: #EEE7FF;
+    font-size: 1vh;
+}
