@@ -1,8 +1,9 @@
 package com.gruppo4.ezstocks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.File;
 import java.io.FileWriter;
 
@@ -11,25 +12,89 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
     	
-//        HttpClient client = HttpClient.newHttpClient();
-//        HttpRequest request = HttpRequest.newBuilder()
-//                .GET()
-//                .header("accept", "application/json")
-//                .uri(URI.create("https://dwweb.gnet.it/dw2022/"))
-//                .build();
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        // parse JSON
-//        ObjectMapper mapper = new ObjectMapper();
-//        List<Post> posts = mapper.readValue(response.body(), new TypeReference<List<Post>>() {});
-//
-//        // posts.forEach(post -> {
-//        //     System.out.println(post.toString());
-//        // });
-//        posts.forEach(System.out::println);
-        ObjectMapper mapper = new ObjectMapper();
-        Post obj = mapper.readValue(new URL("https://dwweb.gnet.it/dw2022/"), Post.class);
-        System.out.println(obj.toString());
+    	// Rest Call to GNET
+    	JsonNode gnet = Rest.restGet("https://dwweb.gnet.it/dw2022/");
+    	
+    	String ticker = gnet.get("ticker").textValue();
+    	LocalDate from = LocalDate.parse( 
+    			gnet.get("starting_date").textValue(),
+    			DateTimeFormatter.ofPattern( "dd/MM/uuuu" ) );
+    	LocalDate to = LocalDate.parse(
+    			gnet.get("ending_date").textValue(),
+    			DateTimeFormatter.ofPattern( "dd/MM/uuuu" ));
+    	
+    	// Generate Polygon URL for Price Data
+    	String priceDataURL = urlConstructor.generateUrl("v2", "aggs", ticker, from.toString(), to.toString());	
+    	
+    	// Rest Call to Polygon
+    	JsonNode priceData = Rest.restGet(priceDataURL);
+    	System.out.println(priceData.toString());
+    	
+    	
+    	String html = ("<!DOCTYPE html>\r\n"
+        		+ "<html lang=\"en\">\r\n"
+        		+ "<head>\r\n"
+        		+ "    <meta charset=\"UTF-8\">\r\n"
+        		+ "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n"
+        		+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+        		+ "    <link rel=\"stylesheet\" href=\"style.css\">\r\n"
+        		+ "    <title>ezStocks</title>\r\n"
+        		+ "</head>\r\n"
+        		+ "<body>\r\n"
+        		+ "\r\n"
+        		+ "    <!-- <div class=\"data\">\r\n"
+        		+ "        <div>\r\n"
+        		+ "            <h1>AAPL | Apple Inc.</h1>\r\n"
+        		+ "            <p>Apple designs a wide variety of consumer electronic devices, including smartphones (iPhone), tablets (iPad), PCs (Mac), smartwatches (Apple Watch), AirPods, and TV boxes (Apple TV), among others. The iPhone makes up the majority of Apple's total revenue. In addition, Apple offers its customers a variety of services such as Apple Music, iCloud, Apple Care, Apple TV+, Apple Arcade, Apple Card, and Apple Pay, among others. Apple's products run internally developed software and semiconductors, and the firm is well known for its integration of hardware, software and services. Apple's products are distributed online as well as through company-owned stores and third-party retailers. The company generates roughly 40% of its revenue from the Americas, with the remainder earned internationally.</p>\r\n"
+        		+ "        </div>\r\n"
+        		+ "        <div>\r\n"
+        		+ "            <h1>AAPL</h1>\r\n"
+        		+ "            <p>Apple Inc.</p>\r\n"
+        		+ "        </div>\r\n"
+        		+ "    </div> -->\r\n"
+        		+ "\r\n"
+        		+ "    <!-- Grafico -->\r\n"
+        		+ "    <div class=\"chart\" width=\"900vw\" height=\"500vh\">\r\n"
+        		+ "        <canvas id=\"myChart\"></canvas>\r\n"
+        		+ "        <div id=\"title\">\r\n"
+        		+ "            <h1 class=\"title\">Loading the Ticker</h1>\r\n"
+        		+ "            <p class=\"subtitle\">Please wait, we're working on your request..      <span style=\"font-family:Arial, FontAwesome\" class=\"icon\"><i class=\"fas fa-heart\"></i></span></p>\r\n"
+        		+ "        </div>\r\n"
+        		+ "    </div>\r\n"
+        		+ "\r\n"
+        		+ "    <!-- Input -->\r\n"
+        		+ "    <!-- <form>\r\n"
+        		+ "        <div class=\"in\">\r\n"
+        		+ "            <label for=\"ticker\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf069;</span>Ticker</label><br>\r\n"
+        		+ "            <input type=\"text\" name=\"ticker\" id=\"ticker\" autocomplete=\"off\" value=\"AAPL\">\r\n"
+        		+ "        </div>\r\n"
+        		+ "        <div class=\"dates\">\r\n"
+        		+ "            <div class=\"in\">\r\n"
+        		+ "                <label for=\"from\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf133;</span>From</label><br>\r\n"
+        		+ "                <input type=\"date\" id=\"from\" name=\"from\" min=\"2019-01-01\" autocomplete=\"off\">\r\n"
+        		+ "            </div>\r\n"
+        		+ "            <div class=\"in\">\r\n"
+        		+ "                <label for=\"to\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf274;</span>To</label><br>\r\n"
+        		+ "                <input type=\"date\" id=\"to\" name=\"to\" min=\"2019-01-01\" autocomplete=\"off\">\r\n"
+        		+ "            </div>\r\n"
+        		+ "        </div>\r\n"
+        		+ "        <div class=\"d\">\r\n"
+        		+ "            <div class=\"btn\">\r\n"
+        		+ "                <input type=\"button\" name=\"submit\" id=\"btn\" value=\"Submit\">\r\n"
+        		+ "            </div>\r\n"
+        		+ "        </div>\r\n"
+        		+ "    </form> -->\r\n"
+        		+ "\r\n"
+        		+ "\r\n"
+        		+ "    <script src=\"https://cdn.jsdelivr.net/npm/luxon@2.3.0/build/global/luxon.min.js\"></script>\r\n"
+        		+ "    <script src=\"https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js\"></script>\r\n"
+        		+ "    <script src=\"https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0/dist/chartjs-adapter-luxon.min.js\"></script>\r\n"
+        		+ "    <script src=\"https://cdn.jsdelivr.net/combine/npm/chartjs-plugin-zoom@1.2.0,npm/hammerjs@2.0.8\"></script>\r\n"
+        		+ "    <script src=\"https://kit.fontawesome.com/0bd1bc4778.js\" crossorigin=\"anonymous\"></script>\r\n"
+        		+ "    <script src=\"src/main.js\"></script>\r\n"
+        		+ "</body>\r\n"
+        		+ "</html>\r\n"
+        		+ "");
         
         // HTML
 
@@ -47,70 +112,7 @@ public class Main {
         
         try {
             FileWriter myWriter = new FileWriter("web/index.html");
-            myWriter.write("<!DOCTYPE html>\r\n"
-            		+ "<html lang=\"en\">\r\n"
-            		+ "<head>\r\n"
-            		+ "    <meta charset=\"UTF-8\">\r\n"
-            		+ "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n"
-            		+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
-            		+ "    <link rel=\"stylesheet\" href=\"style.css\">\r\n"
-            		+ "    <title>ezStocks</title>\r\n"
-            		+ "</head>\r\n"
-            		+ "<body>\r\n"
-            		+ "\r\n"
-            		+ "    <!-- <div class=\"data\">\r\n"
-            		+ "        <div>\r\n"
-            		+ "            <h1>AAPL | Apple Inc.</h1>\r\n"
-            		+ "            <p>Apple designs a wide variety of consumer electronic devices, including smartphones (iPhone), tablets (iPad), PCs (Mac), smartwatches (Apple Watch), AirPods, and TV boxes (Apple TV), among others. The iPhone makes up the majority of Apple's total revenue. In addition, Apple offers its customers a variety of services such as Apple Music, iCloud, Apple Care, Apple TV+, Apple Arcade, Apple Card, and Apple Pay, among others. Apple's products run internally developed software and semiconductors, and the firm is well known for its integration of hardware, software and services. Apple's products are distributed online as well as through company-owned stores and third-party retailers. The company generates roughly 40% of its revenue from the Americas, with the remainder earned internationally.</p>\r\n"
-            		+ "        </div>\r\n"
-            		+ "        <div>\r\n"
-            		+ "            <h1>AAPL</h1>\r\n"
-            		+ "            <p>Apple Inc.</p>\r\n"
-            		+ "        </div>\r\n"
-            		+ "    </div> -->\r\n"
-            		+ "\r\n"
-            		+ "    <!-- Grafico -->\r\n"
-            		+ "    <div class=\"chart\" width=\"900vw\" height=\"500vh\">\r\n"
-            		+ "        <canvas id=\"myChart\"></canvas>\r\n"
-            		+ "        <div id=\"title\">\r\n"
-            		+ "            <h1 class=\"title\">Loading the Ticker</h1>\r\n"
-            		+ "            <p class=\"subtitle\">Please wait, we're working on your request..      <span style=\"font-family:Arial, FontAwesome\" class=\"icon\"><i class=\"fas fa-heart\"></i></span></p>\r\n"
-            		+ "        </div>\r\n"
-            		+ "    </div>\r\n"
-            		+ "\r\n"
-            		+ "    <!-- Input -->\r\n"
-            		+ "    <!-- <form>\r\n"
-            		+ "        <div class=\"in\">\r\n"
-            		+ "            <label for=\"ticker\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf069;</span>Ticker</label><br>\r\n"
-            		+ "            <input type=\"text\" name=\"ticker\" id=\"ticker\" autocomplete=\"off\" value=\"AAPL\">\r\n"
-            		+ "        </div>\r\n"
-            		+ "        <div class=\"dates\">\r\n"
-            		+ "            <div class=\"in\">\r\n"
-            		+ "                <label for=\"from\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf133;</span>From</label><br>\r\n"
-            		+ "                <input type=\"date\" id=\"from\" name=\"from\" min=\"2019-01-01\" autocomplete=\"off\">\r\n"
-            		+ "            </div>\r\n"
-            		+ "            <div class=\"in\">\r\n"
-            		+ "                <label for=\"to\"><span style=\"font-family:Arial, FontAwesome\" class=\"icon\">&#xf274;</span>To</label><br>\r\n"
-            		+ "                <input type=\"date\" id=\"to\" name=\"to\" min=\"2019-01-01\" autocomplete=\"off\">\r\n"
-            		+ "            </div>\r\n"
-            		+ "        </div>\r\n"
-            		+ "        <div class=\"d\">\r\n"
-            		+ "            <div class=\"btn\">\r\n"
-            		+ "                <input type=\"button\" name=\"submit\" id=\"btn\" value=\"Submit\">\r\n"
-            		+ "            </div>\r\n"
-            		+ "        </div>\r\n"
-            		+ "    </form> -->\r\n"
-            		+ "\r\n"
-            		+ "\r\n"
-            		+ "    <script src=\"https://cdn.jsdelivr.net/npm/luxon@2.3.0/build/global/luxon.min.js\"></script>\r\n"
-            		+ "    <script src=\"https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js\"></script>\r\n"
-            		+ "    <script src=\"https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0/dist/chartjs-adapter-luxon.min.js\"></script>\r\n"
-            		+ "    <script src=\"https://cdn.jsdelivr.net/combine/npm/chartjs-plugin-zoom@1.2.0,npm/hammerjs@2.0.8\"></script>\r\n"
-            		+ "    <script src=\"https://kit.fontawesome.com/0bd1bc4778.js\" crossorigin=\"anonymous\"></script>\r\n"
-            		+ "    <script src=\"src/main.js\"></script>\r\n"
-            		+ "</body>\r\n"
-            		+ "</html>\r\n"
-            		+ "");
+            myWriter.write(html);
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
           } catch (IOException e) {
@@ -496,7 +498,7 @@ public class Main {
             		+ "}\r\n"
             		+ "\r\n"
             		+ "\r\n"
-            		+ "final(\""+obj.getTicker()+"\", DateTime.fromFormat(\""+ obj.getStarting_date() + "\", \"dd/MM/yyyy\").toISODate(), DateTime.fromFormat(\"" + obj.getEnding_date() + "\", \"dd/MM/yyyy\").toISODate());");
+            		+ "final("+gnet.get("ticker")+", DateTime.fromFormat("+ gnet.get("starting_date") + ", \"dd/MM/yyyy\").toISODate(), DateTime.fromFormat(" + gnet.get("ending_date") + ", \"dd/MM/yyyy\").toISODate());");
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
           } catch (IOException e) {

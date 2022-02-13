@@ -11,12 +11,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 
 public abstract class Rest {
-	
 	// JSON-Object Mapper
-	ObjectMapper mapper = new ObjectMapper();
+	static ObjectMapper mapper = new ObjectMapper();
 	
-	public JsonNode restGet(String url) throws StreamReadException, DatabindException, MalformedURLException, IOException {
-		// Creates a JsonNode Object from a .JSON
+	public static JsonNode restGet(String url) throws StreamReadException, DatabindException, MalformedURLException, IOException {
 		return mapper.readValue(new URL(url), JsonNode.class);
 	}
 }
