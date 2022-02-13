@@ -3,6 +3,9 @@ package com.gruppo4.ezstocks;
 public abstract class urlConstructor {
 	
 	// URL Constructor for Polygon.io
+	// Examples:
+	// Ticker Details V3: https://api.polygon.io/v3/reference/tickers/AAPL?apiKey=3EeuHppKTp5zgsIDr1KI2BtsfdveDj7G
+	// Aggregates (Bars): https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2021-07-22/2021-07-22?adjusted=true&sort=asc&limit=120&apiKey=3EeuHppKTp5zgsIDr1KI2BtsfdveDj7G
 	
 	
 	// Settings:
@@ -26,8 +29,3 @@ public abstract class urlConstructor {
 	    return generatedUrl; 
 	}
 }
-
-
-// URL Examples
-// Ticker Details V3: https://api.polygon.io/v3/reference/tickers/AAPL?apiKey=3EeuHppKTp5zgsIDr1KI2BtsfdveDj7G
-// Aggregates (Bars): https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/day/2021-07-22/2021-07-22?adjusted=true&sort=asc&limit=120&apiKey=3EeuHppKTp5zgsIDr1KI2BtsfdveDj7G
